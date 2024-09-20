@@ -32,8 +32,11 @@ def generate_launch_description():
     apu_node = LifecycleNode(
         package='autopilot_driver',
         executable='apu_node',
-        name='autopilot_base',
+        name='autopilot_driver_node',
         namespace=TextSubstitution(text=''),
+        remappings=[
+            ("/autopilot/imu", "/sensing/imu/imu_raw")
+        ],
         output='screen')
 
     apu_configure_event_handler = RegisterEventHandler(
