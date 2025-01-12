@@ -37,6 +37,7 @@ class Autopilot(Node):
         self.mode = 15
         self.is_rebooted = False
         self.heading_ = 0.0
+        self.heading_received = False
         self.attitude_msg = None
         self.last_sent = 0
         self.imu_msg = None
@@ -257,6 +258,15 @@ class Autopilot(Node):
     def heading_transform(self, deg):
         if deg <= 0.:
             deg += 360.
+        old_deg = np.rad2deg(self.heading_)
+
+        # this is the first heading, do not use memory!
+        if not self.heading_received:
+            self.heading_received = True
+        # assume that in one step we cannot have a heading change more than 300 degrees
+        elif abs(deg - old_deg) > 300:
+            deg -= 360.
+        
         return np.deg2rad(deg)
 
     def heading_callback(self, msg):
